@@ -3,8 +3,11 @@ import { useFormContext } from "react-hook-form";
 import { Schema } from "../types/schema";
 import { RHFAutocomplete } from "../../components/RHFAutocomplete";
 import { useEffect } from "react";
+import { useStates } from "../services/queries";
 
 export function Users() {
+  const statesQuery = useStates();
+
   const {
     register,
     formState: { errors },
@@ -34,10 +37,7 @@ export function Users() {
       <RHFAutocomplete<Schema>
         name="states"
         label="States"
-        options={[
-          { id: "1", label: "Barcelona" },
-          { id: "2", label: "London" },
-        ]}
+        options={statesQuery.data}
       />
     </Stack>
   );
