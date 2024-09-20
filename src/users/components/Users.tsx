@@ -3,10 +3,12 @@ import { useFormContext } from "react-hook-form";
 import { Schema } from "../types/schema";
 import { RHFAutocomplete } from "../../components/RHFAutocomplete";
 import { useEffect } from "react";
-import { useStates } from "../services/queries";
+import { useLanguages, useStates } from "../services/queries";
+import { RHFToggleButtonGroup } from "../../components/RHFToggleButtonGroup";
 
 export function Users() {
   const statesQuery = useStates();
+  const languagesQuery = useLanguages();
 
   const {
     register,
@@ -38,6 +40,10 @@ export function Users() {
         name="states"
         label="States"
         options={statesQuery.data}
+      />
+      <RHFToggleButtonGroup<Schema>
+        name="languages"
+        options={languagesQuery.data}
       />
     </Stack>
   );
