@@ -14,7 +14,7 @@ type Props<T extends FieldValues> = {
   options?: Option[];
 };
 
-export function RHFTRadioGroup<T extends FieldValues>({
+export function RHFRadioGroup<T extends FieldValues>({
   name,
   label,
   options,
