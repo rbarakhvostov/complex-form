@@ -1,4 +1,4 @@
-import { TextField, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 import { useFormContext } from "react-hook-form";
 import { Schema } from "../types/schema";
 import { RHFAutocomplete } from "../../components/RHFAutocomplete";
@@ -16,6 +16,7 @@ import { RHFDateTimePicker } from "../../components/RHFDateTimePicker";
 import { RHFDateRangePicker } from "../../components/RHFDateRangePicker";
 import { RHFSlider } from "../../components/RHFSlider";
 import { RHFSwitch } from "../../components/RHFSwitch";
+import { RHFTextField } from "../../components/RHFTextField";
 
 export function Users() {
   const statesQuery = useStates();
@@ -23,11 +24,7 @@ export function Users() {
   const gendersQuery = useGenders();
   const skillsQuery = useSkills();
 
-  const {
-    register,
-    formState: { errors },
-    watch,
-  } = useFormContext<Schema>();
+  const { watch } = useFormContext<Schema>();
 
   useEffect(() => {
     const { unsubscribe } = watch((value) => console.log(value));
@@ -37,18 +34,8 @@ export function Users() {
 
   return (
     <Stack sx={{ gap: 2 }}>
-      <TextField
-        {...register("name")}
-        label="Name"
-        error={!!errors.name}
-        helperText={errors.name?.message}
-      />
-      <TextField
-        {...register("email")}
-        label="Email"
-        error={!!errors.email}
-        helperText={errors.email?.message}
-      />
+      <RHFTextField<Schema> name="name" label="Name" />
+      <RHFTextField<Schema> name="email" label="Email" />
       <RHFAutocomplete<Schema>
         name="states"
         label="States"
