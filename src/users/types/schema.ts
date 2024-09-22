@@ -16,6 +16,7 @@ export const schema = z.object({
   registrationDateTime: z.date(),
   formerEmploymentPerion: z.array(z.date()).min(2).max(2),
   salaryRange: z.array(z.number()).min(2).max(2),
+  isTeacher: z.boolean(),
 });
 
 export type Schema = z.infer<typeof schema>;
@@ -30,4 +31,5 @@ export const defaultValues: Schema = {
   registrationDateTime: new Date(),
   formerEmploymentPerion: [new Date(), new Date()],
   salaryRange: [0, 70],
+  isTeacher: true,
 };

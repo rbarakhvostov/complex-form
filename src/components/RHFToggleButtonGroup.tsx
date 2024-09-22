@@ -33,6 +33,6 @@ export function RHFToggleButtonGroup<T extends FieldValues>({
           ))}
         </ToggleButtonGroup>
       )}
-    ></Controller>
+    />
   );
 }

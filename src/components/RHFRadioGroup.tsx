@@ -40,6 +40,6 @@ export function RHFRadioGroup<T extends FieldValues>({
           </RadioGroup>
         </FormControl>
       )}
-    ></Controller>
+    />
   );
 }
