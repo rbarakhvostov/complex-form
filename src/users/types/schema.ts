@@ -14,6 +14,7 @@ export const schema = z.object({
   gender: z.string().min(1),
   skills: z.array(z.string()).max(2),
   registrationDateTime: z.date(),
+  formerEmploymentPerion: z.array(z.date()).min(2).max(2),
 });
 
 export type Schema = z.infer<typeof schema>;
@@ -26,4 +27,5 @@ export const defaultValues: Schema = {
   gender: "",
   skills: [],
   registrationDateTime: new Date(),
+  formerEmploymentPerion: [new Date(), new Date()],
 };
