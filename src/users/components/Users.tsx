@@ -1,4 +1,13 @@
-import { Button, Container, Stack } from "@mui/material";
+import {
+  Button,
+  Container,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  ListSubheader,
+  Stack,
+} from "@mui/material";
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
 import { defaultValues, Schema } from "../types/schema";
 import { RHFAutocomplete } from "../../components/RHFAutocomplete";
@@ -8,6 +17,8 @@ import {
   useLanguages,
   useSkills,
   useStates,
+  useUser,
+  useUsers,
 } from "../services/queries";
 import { RHFToggleButtonGroup } from "../../components/RHFToggleButtonGroup";
 import { RHFRadioGroup } from "../../components/RHFRadioGroup";
@@ -23,8 +34,13 @@ export function Users() {
   const languagesQuery = useLanguages();
   const gendersQuery = useGenders();
   const skillsQuery = useSkills();
+  const usersQuery = useUsers();
 
-  const { watch, control, unregister, reset } = useFormContext<Schema>();
+  const { watch, control, unregister, reset, setValue } =
+    useFormContext<Schema>();
+
+  const id = useWatch({ control, name: "id" });
+  const userQuery = useUser(id);
 
   useEffect(() => {
     const { unsubscribe } = watch((value) => console.log(value));
@@ -46,61 +62,80 @@ export function Users() {
     }
   }, [isTeacher, replace, unregister]);
 
+  const handleUserClick = (id: string) => {
+    setValue("id", id);
+  };
+
   const handleReset = () => reset(defaultValues);
 
   return (
     <Container maxWidth="sm" component="form">
-      <Stack sx={{ gap: 2 }}>
-        <RHFTextField<Schema> name="name" label="Name" />
-        <RHFTextField<Schema> name="email" label="Email" />
-        <RHFAutocomplete<Schema>
-          name="states"
-          label="States"
-          options={statesQuery.data}
-        />
-        <RHFToggleButtonGroup<Schema>
-          name="languages"
-          options={languagesQuery.data}
-        />
-        <RHFRadioGroup<Schema>
-          name="gender"
-          options={gendersQuery.data}
-          label="Gender"
-        />
-        <RHFCheckbox<Schema>
-          name="skills"
-          options={skillsQuery.data}
-          label="Skills"
-        />
-        <RHFDateTimePicker<Schema>
-          name="registrationDateTime"
-          label="Registration Date & Time"
-        />
-        <RHFDateRangePicker<Schema>
-          name="formerEmploymentPerion"
-          label="Former Employment Period:"
-        />
-        <RHFSlider<Schema> name="salaryRange" label="Salary Range" />
-        <RHFSwitch<Schema> name="isTeacher" label="Are you a teacher?" />
+      <Stack sx={{ flexDirection: "row", gap: 2 }}>
+        <List subheader={<ListSubheader>Users</ListSubheader>}>
+          {usersQuery.data?.map((user) => (
+            <ListItem disablePadding key={user.id}>
+              <ListItemButton
+                selected={id === user.id}
+                onClick={() => handleUserClick(user.id)}
+              >
+                <ListItemText primary={user.label} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
 
-        {isTeacher && (
-          <Button onClick={() => append({ name: "" })} type="button">
-            Add new student
-          </Button>
-        )}
+        <Stack sx={{ gap: 2 }}>
+          <RHFTextField<Schema> name="name" label="Name" />
+          <RHFTextField<Schema> name="email" label="Email" />
+          <RHFAutocomplete<Schema>
+            name="states"
+            label="States"
+            options={statesQuery.data}
+          />
+          <RHFToggleButtonGroup<Schema>
+            name="languagesSpoken"
+            options={languagesQuery.data}
+          />
+          <RHFRadioGroup<Schema>
+            name="gender"
+            options={gendersQuery.data}
+            label="Gender"
+          />
+          <RHFCheckbox<Schema>
+            name="skills"
+            options={skillsQuery.data}
+            label="Skills"
+          />
+          <RHFDateTimePicker<Schema>
+            name="registrationDateTime"
+            label="Registration Date & Time"
+          />
+          <RHFDateRangePicker<Schema>
+            name="formerEmploymentPeriod"
+            label="Former Employment Period:"
+          />
+          <RHFSlider<Schema> name="salaryRange" label="Salary Range" />
+          <RHFSwitch<Schema> name="isTeacher" label="Are you a teacher?" />
 
-        {fields.map((field, index) => (
-          <Fragment key={field.id}>
-            <RHFTextField name={`students[${index}].name`} label="Name" />
-            <Button color="error" onClick={() => remove(index)} type="button">
-              Remove
+          {isTeacher && (
+            <Button onClick={() => append({ name: "" })} type="button">
+              Add new student
             </Button>
-          </Fragment>
-        ))}
+          )}
 
-        <Stack sx={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Button type="submit">New user</Button>
-          <Button onClick={handleReset}>Reset</Button>
+          {fields.map((field, index) => (
+            <Fragment key={field.id}>
+              <RHFTextField name={`students[${index}].name`} label="Name" />
+              <Button color="error" onClick={() => remove(index)} type="button">
+                Remove
+              </Button>
+            </Fragment>
+          ))}
+
+          <Stack sx={{ flexDirection: "row", justifyContent: "space-between" }}>
+            <Button type="submit">New user</Button>
+            <Button onClick={handleReset}>Reset</Button>
+          </Stack>
         </Stack>
       </Stack>
     </Container>
