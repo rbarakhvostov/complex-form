@@ -52,7 +52,7 @@ export function useUsers() {
         res.data.map(
           (user) =>
             ({
-              id: user.id,
+              id: user.id.toString(),
               label: user.name,
             } satisfies Option)
         )
@@ -70,7 +70,7 @@ export function useUser(id: string) {
 
       return {
         variant: "edit",
-        id: data.id,
+        id: data.id.toString(),
         name: data.name,
         email: data.email,
         formerEmploymentPeriod: [
@@ -79,7 +79,7 @@ export function useUser(id: string) {
         ],
         gender: data.gender,
         languagesSpoken: data.languagesSpoken,
-        registrationDateTime: new Date(data.registrationDateAndTime),
+        registrationDateAndTime: new Date(data.registrationDateAndTime),
         salaryRange: [data.salaryRange[0], data.salaryRange[1]],
         skills: data.skills,
         states: data.states,

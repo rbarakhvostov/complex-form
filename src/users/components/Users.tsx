@@ -8,7 +8,12 @@ import {
   ListSubheader,
   Stack,
 } from "@mui/material";
-import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
+import {
+  SubmitHandler,
+  useFieldArray,
+  useFormContext,
+  useWatch,
+} from "react-hook-form";
 import { defaultValues, Schema } from "../types/schema";
 import { RHFAutocomplete } from "../../components/RHFAutocomplete";
 import { Fragment, useEffect } from "react";
@@ -28,6 +33,7 @@ import { RHFDateRangePicker } from "../../components/RHFDateRangePicker";
 import { RHFSlider } from "../../components/RHFSlider";
 import { RHFSwitch } from "../../components/RHFSwitch";
 import { RHFTextField } from "../../components/RHFTextField";
+import { useCreateUser, useEditUser } from "../services/mutations";
 
 export function Users() {
   const statesQuery = useStates();
@@ -36,10 +42,12 @@ export function Users() {
   const skillsQuery = useSkills();
   const usersQuery = useUsers();
 
-  const { watch, control, unregister, reset, setValue } =
+  const { watch, control, unregister, reset, setValue, handleSubmit } =
     useFormContext<Schema>();
 
   const id = useWatch({ control, name: "id" });
+  const variant = useWatch({ control, name: "variant" });
+
   const userQuery = useUser(id);
 
   useEffect(() => {
@@ -62,14 +70,31 @@ export function Users() {
     }
   }, [isTeacher, replace, unregister]);
 
+  useEffect(() => {
+    if (userQuery.data) {
+      reset(userQuery.data);
+    }
+  }, [reset, userQuery.data]);
+
   const handleUserClick = (id: string) => {
     setValue("id", id);
   };
 
   const handleReset = () => reset(defaultValues);
 
+  const createUserMutation = useCreateUser();
+  const editUserMutation = useEditUser();
+
+  const onSubmit: SubmitHandler<Schema> = (data) => {
+    if (variant === "create") {
+      createUserMutation.mutate(data);
+    } else {
+      editUserMutation.mutate(data);
+    }
+  };
+
   return (
-    <Container maxWidth="sm" component="form">
+    <Container maxWidth="sm" component="form" onSubmit={handleSubmit(onSubmit)}>
       <Stack sx={{ flexDirection: "row", gap: 2 }}>
         <List subheader={<ListSubheader>Users</ListSubheader>}>
           {usersQuery.data?.map((user) => (
@@ -107,7 +132,7 @@ export function Users() {
             label="Skills"
           />
           <RHFDateTimePicker<Schema>
-            name="registrationDateTime"
+            name="registrationDateAndTime"
             label="Registration Date & Time"
           />
           <RHFDateRangePicker<Schema>
@@ -133,7 +158,9 @@ export function Users() {
           ))}
 
           <Stack sx={{ flexDirection: "row", justifyContent: "space-between" }}>
-            <Button type="submit">New user</Button>
+            <Button type="submit" variant="contained">
+              {variant === "create" ? "New user" : "Edit user"}
+            </Button>
             <Button onClick={handleReset}>Reset</Button>
           </Stack>
         </Stack>
