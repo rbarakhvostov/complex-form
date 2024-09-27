@@ -87,5 +87,6 @@ export function useUser(id: string) {
         isTeacher: data.isTeacher,
       };
     },
+    enabled: !!id,
   });
 }
